@@ -5,6 +5,7 @@ import { CustomParseIntPipe } from 'src/common/pipes/custom-parse-int-pipe.pipe'
 export class UserController {
   @Get(':id')
   findOne(@Param('id', CustomParseIntPipe) id: number) {
+    console.log(process.env.TESTE)
     return `Olá do controller User com id: ${id}`
   }
 }
