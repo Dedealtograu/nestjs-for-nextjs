@@ -41,3 +41,30 @@ Authorization: Bearer {{jwtToken}}
   "email": "altograudede@email.com",
   "email": "altograu@email.com",
 }
+
+### update user password
+# @name updateUserPassword
+
+
+PATCH {{baseUrl}}/user/me/password
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+  "currentPassword": "54321C",
+  "newPassword": "C12345"
+}
+
+### Read one user
+# @name readOneUser
+
+GET {{baseUrl}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+### delete user
+# @name deleteUser
+
+DELETE {{baseUrl}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}

@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
-import { CustomParseIntPipe } from 'src/common/pipes/custom-parse-int-pipe.pipe'
+import { Body, Controller, Delete, Get, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { ConfigService } from '@nestjs/config'
 import { UserService } from './user.service'
@@ -7,6 +6,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
 import { AuthenticatedRequest } from 'src/auth/types/authenticated-request'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UserRespnseDto } from './dto/user-response.dto'
+import { UpdatePasswordDto } from './dto/update-password.dto'
 
 @Controller('user')
 export class UserController {
@@ -17,9 +17,9 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Req() req: AuthenticatedRequest, @Param('id', CustomParseIntPipe) id: number) {
-    console.log(req.user.id)
-    return `Olá do controller User com id: ${id}`
+  async findOne(@Req() req: AuthenticatedRequest) {
+    const user = await this.userService.findOneByOrFail({ id: req.user.id })
+    return new UserRespnseDto(user)
   }
 
   @Post()
@@ -33,6 +33,22 @@ export class UserController {
   @Patch('me')
   async update(@Req() req: AuthenticatedRequest, @Body() dto: UpdateUserDto) {
     const user = await this.userService.update(req.user.id, dto)
+
+    return new UserRespnseDto(user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/password')
+  async updatePassword(@Req() req: AuthenticatedRequest, @Body() dto: UpdatePasswordDto) {
+    const user = await this.userService.updatePassword(req.user.id, dto)
+
+    return new UserRespnseDto(user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  async delete(@Req() req: AuthenticatedRequest) {
+    const user = await this.userService.remove(req.user.id)
 
     return new UserRespnseDto(user)
   }
