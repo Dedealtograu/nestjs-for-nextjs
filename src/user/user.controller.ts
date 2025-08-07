@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { CustomParseIntPipe } from 'src/common/pipes/custom-parse-int-pipe.pipe'
 import { CreateUserDto } from './dto/create-user.dto'
 import { ConfigService } from '@nestjs/config'
 import { UserService } from './user.service'
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
-import type { AuthenticatedRequest } from 'src/auth/types/authenticated-request'
+import { AuthenticatedRequest } from 'src/auth/types/authenticated-request'
+import { UpdateUserDto } from './dto/update-user.dto'
+import { UserRespnseDto } from './dto/user-response.dto'
 
 @Controller('user')
 export class UserController {
@@ -21,7 +23,17 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() dto: CreateUserDto) {
-    return this.userService.create(dto)
+  async create(@Body() dto: CreateUserDto) {
+    const user = await this.userService.create(dto)
+
+    return new UserRespnseDto(user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  async update(@Req() req: AuthenticatedRequest, @Body() dto: UpdateUserDto) {
+    const user = await this.userService.update(req.user.id, dto)
+
+    return new UserRespnseDto(user)
   }
 }
