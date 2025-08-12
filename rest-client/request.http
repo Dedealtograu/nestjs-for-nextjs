@@ -17,6 +17,7 @@
 # @name authLogin
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
+Origin: http://localhost:3000
 
 {
   "email": "{{userEmailForTesting}}",
