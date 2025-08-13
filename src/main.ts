@@ -13,12 +13,12 @@ async function bootstrap() {
     }),
   )
 
-  const corsWhitelist = parseCorsWhitelist(process.env.CORS_WHITELIST || '')
+  const corsWhitelist = parseCorsWhitelist(process.env.CORS_WHITELIST ?? '')
 
   app.enableCors({
     origin: (origin: string | undefined, callback: (...args: any[]) => void) => {
       if (!origin || corsWhitelist.includes(origin)) {
-        callback(null, true)
+        return callback(null, true)
       }
 
       return callback(new Error('Not allowed by CORS'), false)
